@@ -20,7 +20,7 @@ const BreweryForm = ({ brewery }) => {
     try {
       const token = await getAccessTokenSilently();
       const apiServerUrl = process.env.REACT_APP_API_SERVER_URL;
-      const response = await fetch(`${apiServerUrl}/api/brewery/create_brewery`, {
+      const response = await fetch(`${apiServerUrl}/api/breweries/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
