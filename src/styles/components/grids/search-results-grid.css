@@ -1,0 +1,6 @@
+.search-results-grid {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 3rem 6rem;
+}
