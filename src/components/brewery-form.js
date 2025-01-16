@@ -1,8 +1,10 @@
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
 
-const BreweryForm = ({ brewery }) => {
+export const BreweryForm = ({ brewery }) => {
   const { getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -31,6 +33,7 @@ const BreweryForm = ({ brewery }) => {
 
       if (response.ok) {
         console.log('Brewery added successfully');
+        navigate('/breweries');
       } else {
         console.error('Failed to add brewery');
       }
@@ -47,5 +50,3 @@ const BreweryForm = ({ brewery }) => {
     </form>
   );
 };
-
-export default BreweryForm;

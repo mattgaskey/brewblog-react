@@ -1,7 +1,7 @@
 import React from 'react';
-import BrewerySearchResult from './brewery-search-result';
+import { BrewerySearchResult } from './brewery-search-result';
 
-const BrewerySearchResults = ({ breweries }) => {
+export const BrewerySearchResults = ({ breweries }) => {
   return (
     <div className="results w-100 mt-4">
       {breweries.length > 0 && (
@@ -16,5 +16,3 @@ const BrewerySearchResults = ({ breweries }) => {
     </div>
   );
 };
-
-export default BrewerySearchResults;

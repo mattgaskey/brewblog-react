@@ -82,6 +82,8 @@ h6 {
 
 p {
   margin: 0 0 1.6rem;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
 }
 
 strong {
@@ -120,6 +122,34 @@ textarea {
 }
 
 a {
+  color: var(--aqua);
+  font-weight: 600;
+  text-decoration: none;
+
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+}
+
+a:hover,
+a:focus,
+a:active {
+  color: var(--indigo);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--emerald);
+}
+
+nav a {
+  color: var(--white);
+  text-decoration: none;
+}
+
+nav a:hover,
+nav a:focus,
+nav a:active,
+nav a:visited {
   color: var(--white);
   text-decoration: none;
 }

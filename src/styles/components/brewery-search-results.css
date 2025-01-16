@@ -74,23 +74,6 @@
 .brewery-search-result__link {
   display: flex;
   align-items: center;
-
-  color: var(--aqua);
-  font-weight: 600;
-
-  font-size: 1.6rem;
-  line-height: 2.4rem;
-}
-
-.brewery-search-result__link:hover,
-.brewery-search-result__link:focus,
-.brewery-search-result__link:active {
-  color: var(--indigo); 
-  text-decoration: underline; 
-}
-
-.brewery-search-result__link:visited {
-  color: var(--emerald); 
 }
 
 @media only screen and (max-width: 900px) {

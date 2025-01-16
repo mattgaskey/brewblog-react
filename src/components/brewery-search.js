@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const BrewerySearch = ({ setSearchResults }) => {
+export const BrewerySearch = ({ setSearchResults }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleInputChange = (event) => {
@@ -32,5 +32,3 @@ const BrewerySearch = ({ setSearchResults }) => {
     </div>
   );
 };
-
-export default BrewerySearch;

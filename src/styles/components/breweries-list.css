@@ -1,0 +1,17 @@
+.breweries-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.breweries-list li {
+  margin-bottom: 10px;
+}
+
+.breweries-list a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.breweries-list a:hover {
+  text-decoration: underline;
+}

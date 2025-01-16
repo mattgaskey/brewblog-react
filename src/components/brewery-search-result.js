@@ -1,7 +1,7 @@
 import React from 'react';
-import BreweryForm from './brewery-form';
+import { BreweryForm } from './brewery-form';
 
-const BrewerySearchResult = ({ brewery }) => (
+export const BrewerySearchResult = ({ brewery }) => (
     <div className="search-results-grid">
       <div>
         <h3 className="brewery-search-result__headline">
@@ -23,5 +23,3 @@ const BrewerySearchResult = ({ brewery }) => (
     </div>
     
 );
-
-export default BrewerySearchResult;
