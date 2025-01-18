@@ -3,17 +3,20 @@ import sqlalchemy as sa
 from brewblog import db
 from brewblog.beer import bp
 from brewblog.models import Beer, Brewery, Style
-from brewblog.auth_decorator import require_permission
+from brewblog.auth import requires_auth
+from brewblog.error_handlers import register_error_handlers
+
+register_error_handlers(bp)
 
 @bp.route('/api/breweries/<string:brewery_id>/beers', methods=['GET'])
-@require_permission('get:breweries')
-def get_beers_for_brewery(brewery_id):
+@requires_auth('get:breweries')
+def get_beers_for_brewery(brewery_id, payload):
     beers = db.session.scalars(sa.select(Beer).where(Beer.brewery_id == brewery_id)).all()
     return jsonify([beer.serialize() for beer in beers]), 200
 
 @bp.route('/api/beers/create', methods=['POST'])
-@require_permission('create:beers')
-def create_beer():
+@requires_auth('create:beers')
+def create_beer(payload):
     data = request.json
     brewery_id = data.get('brewery_id')
     brewery = db.session.scalar(sa.select(Brewery).where(Brewery.id == brewery_id))
@@ -31,8 +34,8 @@ def create_beer():
     return jsonify(new_beer.serialize()), 201
 
 @bp.route('/api/beers/<int:beer_id>/delete', methods=['POST'])
-@require_permission('delete:beers')
-def delete_beer(beer_id):
+@requires_auth('delete:beers')
+def delete_beer(beer_id, payload):
     beer = db.session.scalar(sa.select(Beer).where(Beer.id == beer_id))
     if beer is None:
         return jsonify({'error': f'Beer with id {beer_id} not found.'}), 404

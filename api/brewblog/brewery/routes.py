@@ -3,11 +3,14 @@ import sqlalchemy as sa
 from brewblog import db
 from brewblog.brewery import bp
 from brewblog.models import Brewery
-from brewblog.auth_decorator import require_permission
+from brewblog.auth import requires_auth
+from brewblog.error_handlers import register_error_handlers
+
+register_error_handlers(bp)
 
 @bp.route('/api/breweries')
-@require_permission('get:breweries')
-def breweries():
+@requires_auth('get:breweries')
+def breweries(payload):
     breweries = db.session.scalars(sa.select(Brewery)).all()
 
     areas = {}
@@ -22,8 +25,8 @@ def breweries():
     return jsonify(areas_list)
 
 @bp.route('/api/breweries/create', methods=['POST'])
-@require_permission('create:breweries')
-def create_brewery():
+@requires_auth('create:breweries')
+def create_brewery(payload):
     data = request.json
     brewery_id = data.get('id')
 
@@ -46,8 +49,8 @@ def create_brewery():
     return jsonify(new_brewery.serialize()), 201
 
 @bp.route('/api/breweries/<string:brewery_id>')
-@require_permission('get:breweries')
-def show_brewery(brewery_id):
+@requires_auth('get:breweries')
+def show_brewery(brewery_id, payload):
     brewery = db.session.scalar(sa.select(Brewery).where(Brewery.id == brewery_id))
     if brewery is None:
         return jsonify({'error': f'Brewery with id {brewery_id} not found.'}), 404
@@ -57,8 +60,8 @@ def show_brewery(brewery_id):
     return jsonify(brewery_data)
 
 @bp.route('/api/breweries/<string:brewery_id>/edit', methods=['POST', 'PATCH'])
-@require_permission('edit:breweries')
-def edit_brewery(brewery_id):
+@requires_auth('edit:breweries')
+def edit_brewery(brewery_id, payload):
     brewery = db.session.scalar(sa.select(Brewery).where(Brewery.id == brewery_id))
     if brewery is None:
         return jsonify({'error': f'Brewery with id {brewery_id} not found.'}), 404
