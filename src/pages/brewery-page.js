@@ -8,14 +8,14 @@ import '../styles/components/brewery-page.css';
 
 export const BreweryPage = () => {
   const { id } = useParams();
-  const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const [brewery, setBrewery] = useState(null);
   const [beers, setBeers] = useState([]);
 
   useEffect(() => {
     const fetchBreweryAndBeers = async () => {
       if (!isAuthenticated) {
-        loginWithRedirect();
+        console.log('User is not authenticated.');
         return;
       }
 
@@ -54,7 +54,7 @@ export const BreweryPage = () => {
     };
 
     fetchBreweryAndBeers();
-  }, [getAccessTokenSilently, isAuthenticated, loginWithRedirect, id]);
+  }, [getAccessTokenSilently, isAuthenticated, id]);
 
   const handleBeerAdded = () => {
 
