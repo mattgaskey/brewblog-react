@@ -1,5 +1,5 @@
 import React from 'react';
-import { BreweryForm } from './brewery-form';
+import { AddBrewery } from './add-brewery';
 
 export const BrewerySearchResult = ({ brewery }) => (
     <div className="search-results-grid">
@@ -18,7 +18,7 @@ export const BrewerySearchResult = ({ brewery }) => (
         >{brewery.website_url}</a>
       </div>
       <div>
-        <BreweryForm brewery={brewery} />
+        <AddBrewery brewery={brewery} />
       </div>
     </div>
     

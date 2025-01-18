@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 
 export const DeleteBeerForm = ({ beerId, onBeerDeleted }) => {
   const { getAccessTokenSilently } = useAuth0();
+  const [hasDeletePermission, setHasDeletePermission] = useState(false);
+
+  useEffect(() => {
+    const checkPermissions = async () => {
+      const token = await getAccessTokenSilently();
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      const permissions = decodedToken.permissions || [];
+      setHasDeletePermission(permissions.includes('delete:beers'));
+    };
+
+    checkPermissions();
+  }, [getAccessTokenSilently]);
 
   const handleDelete = async (e) => {
     e.preventDefault();
@@ -26,9 +38,13 @@ export const DeleteBeerForm = ({ beerId, onBeerDeleted }) => {
     }
   };
 
+  if (!hasDeletePermission) {
+    return null;
+  }
+
   return (
     <form onSubmit={handleDelete}>
-      <button type="submit" className="button button--secondary">Remove</button>
+      <button type="submit" className="button button--danger">Delete Beer</button>
     </form>
   );
 };

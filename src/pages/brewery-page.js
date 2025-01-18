@@ -4,6 +4,8 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { PageLayout } from '../components/page-layout';
 import { BeerForm } from '../components/beer-form';
 import { BeerList } from '../components/beer-list';
+import { BreweryDetails } from '../components/brewery-details';
+import { EditBrewery } from '../components/edit-brewery';
 import '../styles/components/brewery-page.css';
 
 export const BreweryPage = () => {
@@ -85,6 +87,10 @@ export const BreweryPage = () => {
     handleBeerAdded();
   };
 
+  const handleBreweryUpdated = (updatedBrewery) => {
+    setBrewery(updatedBrewery);
+  };
+
   if (!brewery) {
     return <div>Loading...</div>;
   }
@@ -94,29 +100,15 @@ export const BreweryPage = () => {
       <div className="content-layout">
         <div className="content__body">
           <div className="brewery-page">
-            <div className="brewery-info">
-              <h1>{brewery.name}</h1>
-              <p className="monospace">ID: { brewery.id }</p>
-              {brewery.address && (
-                <p><i className="fas fa-map-marker"></i>{brewery.address}</p>
-              )}
-              {brewery.city && brewery.state && (
-                <p><i className="fas fa-globe-americas"></i>{brewery.city}, {brewery.state}</p>
-              )}
-              {brewery.phone && (
-                <p><i className="fas fa-phone-alt"></i>{brewery.phone}</p>
-              )}
-              {brewery.website_link && (
-                <p><i className="fas fa-link"></i>
-                  <Link to={brewery.website_link} target="_blank" rel="noopener noreferrer">
-                    {brewery.website_link}
-                  </Link>
-                </p>
-              )}
+            <div className="left-column">
+              <BreweryDetails brewery={brewery} />
+              <EditBrewery brewery={brewery} onUpdate={handleBreweryUpdated} />
             </div>
-            <div className="beer-form">
-              <h2>Add a Beer</h2>
-              <BeerForm breweryId={brewery.id} onBeerAdded={handleBeerAdded} />
+            <div className="right-column">
+              <div className="beer-form">
+                <h2>Add a Beer</h2>
+                <BeerForm breweryId={brewery.id} onBeerAdded={handleBeerAdded} />
+              </div>
             </div>
           </div>
           {beers.length > 0 && (

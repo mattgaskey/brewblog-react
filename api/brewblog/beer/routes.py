@@ -3,13 +3,16 @@ import sqlalchemy as sa
 from brewblog import db
 from brewblog.beer import bp
 from brewblog.models import Beer, Brewery, Style
+from brewblog.auth_decorator import require_permission
 
 @bp.route('/api/breweries/<string:brewery_id>/beers', methods=['GET'])
+@require_permission('get:breweries')
 def get_beers_for_brewery(brewery_id):
     beers = db.session.scalars(sa.select(Beer).where(Beer.brewery_id == brewery_id)).all()
     return jsonify([beer.serialize() for beer in beers]), 200
 
 @bp.route('/api/beers/create', methods=['POST'])
+@require_permission('create:beers')
 def create_beer():
     data = request.json
     brewery_id = data.get('brewery_id')
@@ -28,6 +31,7 @@ def create_beer():
     return jsonify(new_beer.serialize()), 201
 
 @bp.route('/api/beers/<int:beer_id>/delete', methods=['POST'])
+@require_permission('delete:beers')
 def delete_beer(beer_id):
     beer = db.session.scalar(sa.select(Beer).where(Beer.id == beer_id))
     if beer is None:

@@ -114,7 +114,7 @@ export const BeerForm = ({ breweryId, onBeerAdded }) => {
         </select>
       </div>
       <input type="hidden" name="brewery_id" value={formData.brewery_id} />
-      <button type="submit" className="button button--primary">Add Beer</button>
+      <button type="submit" className="button button--compact button--primary">Add Beer</button>
     </form>
   );
 };

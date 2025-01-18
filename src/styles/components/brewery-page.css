@@ -3,12 +3,12 @@
   justify-content: space-between;
 }
 
-.brewery-info {
+.left-column {
   flex: 1;
   margin-right: 20px;
-}
+} 
 
-.beer-form {
+.right-column {
   flex: 1;
 }
 

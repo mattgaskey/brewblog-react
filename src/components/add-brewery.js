@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 
-export const BreweryForm = ({ brewery }) => {
-  const { getAccessTokenSilently } = useAuth0();
+export const AddBrewery = ({ brewery }) => {
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const navigate = useNavigate();
+  const [hasCreatePermission, setHasCreatePermission] = useState(false);
+
+  useEffect(() => {
+    const checkPermissions = async () => {
+      if (!isAuthenticated) {
+        return;
+      }
+      const token = await getAccessTokenSilently();
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      const permissions = decodedToken.permissions || [];
+      setHasCreatePermission(permissions.includes('create:breweries'));
+    };
+
+    checkPermissions();
+  }, [getAccessTokenSilently]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -42,9 +57,13 @@ export const BreweryForm = ({ brewery }) => {
     }
   };
 
+  if (!hasCreatePermission) {
+    return null;
+  }
+
   return (
     <form onSubmit={handleSubmit}>
-      <button type="submit" className="button button--primary">
+      <button type="submit" className="button button--compact button--primary">
         <i className="fas fa-heart"></i>
       </button>
     </form>
