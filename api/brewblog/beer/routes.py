@@ -2,7 +2,12 @@ from flask import request, jsonify
 import sqlalchemy as sa
 from brewblog import db
 from brewblog.beer import bp
-from brewblog.models import Beer, Brewery
+from brewblog.models import Beer, Brewery, Style
+
+@bp.route('/api/breweries/<string:brewery_id>/beers', methods=['GET'])
+def get_beers_for_brewery(brewery_id):
+    beers = db.session.scalars(sa.select(Beer).where(Beer.brewery_id == brewery_id)).all()
+    return jsonify([beer.serialize() for beer in beers]), 200
 
 @bp.route('/api/beers/create', methods=['POST'])
 def create_beer():
@@ -15,7 +20,7 @@ def create_beer():
     new_beer = Beer(
         name=data.get('name'),
         description=data.get('description'),
-        style=data.get('style'),
+        style_id=data.get('style'),
         brewery_id=brewery.id
     )
     db.session.add(new_beer)
@@ -32,3 +37,8 @@ def delete_beer(beer_id):
     db.session.delete(beer)
     db.session.commit()
     return jsonify({'message': f'Beer {beer.name} deleted successfully.', 'brewery_id': brewery_id}), 200
+
+@bp.route('/api/styles', methods=['GET'])
+def get_styles():
+    styles = db.session.scalars(sa.select(Style).distinct()).all()
+    return jsonify([style.serialize() for style in styles]), 200

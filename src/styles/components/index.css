@@ -1,4 +1,7 @@
+@import "beer-form.css"
+@import "beer-list.css"
 @import "breweries-list.css"
+@import "brewery-page.css"
 @import "brewery-search.css";
 @import "brewery-search-results.css";
 @import "button.css";

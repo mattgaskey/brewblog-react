@@ -1,0 +1,46 @@
+.beer-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-family: --var(font-primary);
+}
+
+.beer-form .text-input {
+  padding: 0.5rem;
+  font-size: 1.75rem;
+  border: 1px solid var(--aluminium);
+  border-radius: 8px;
+  height: 40px; 
+  width: 100%;
+}
+
+.beer-form .text-area {
+  padding: 0.5rem;
+  font-size: 1.75rem;
+  border: 1px solid var(--aluminium);
+  border-radius: 8px;
+  height: 100px;
+  width: 100%;
+}
+
+.beer-form .dropdown {
+  padding: 0.5rem;
+  font-size: 1.75rem;
+  border: 1px solid var(--aluminium);
+  border-radius: 8px;
+  height: 40px;
+  width: 100%;
+}
