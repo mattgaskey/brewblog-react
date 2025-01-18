@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { DeleteBeerForm } from './delete-beer';
 import '../styles/components/beer-list.css';
 

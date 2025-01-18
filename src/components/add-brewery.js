@@ -19,7 +19,7 @@ export const AddBrewery = ({ brewery }) => {
     };
 
     checkPermissions();
-  }, [getAccessTokenSilently]);
+  }, [getAccessTokenSilently, isAuthenticated]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();

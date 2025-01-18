@@ -15,7 +15,6 @@ export const BeerForm = ({ breweryId, onBeerAdded }) => {
   useEffect(() => {
     const fetchStyles = async () => {
       try {
-        const token = await getAccessTokenSilently();
         const response = await fetch(`${process.env.REACT_APP_API_SERVER_URL}/api/styles`);
 
         if (response.ok) {
@@ -30,7 +29,7 @@ export const BeerForm = ({ breweryId, onBeerAdded }) => {
     };
 
     fetchStyles();
-  }, [getAccessTokenSilently]);
+  }, []);
 
   const handleChange = (e) => {
     setFormData({

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { PageLayout } from '../components/page-layout';
 import { BeerForm } from '../components/beer-form';
