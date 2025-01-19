@@ -1,4 +1,5 @@
 from flask import jsonify
+from brewblog.auth import AuthError
 
 def register_error_handlers(bp):
     @bp.errorhandler(400)
@@ -29,4 +30,10 @@ def register_error_handlers(bp):
     def internal_server_error(error):
         response = jsonify({'error': 'Internal Server Error', 'message': str(error)})
         response.status_code = 500
+        return response
+    
+    @bp.errorhandler(AuthError)
+    def handle_auth_error(error):
+        response = jsonify(error.error)
+        response.status_code = error.status_code
         return response

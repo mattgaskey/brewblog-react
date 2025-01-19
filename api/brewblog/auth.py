@@ -1,10 +1,11 @@
 import json
 import os
-import certifi
-from flask import request
+import ssl
 from functools import wraps
-from jose import jwt
 from urllib.request import urlopen
+from flask import request
+from jose import jwt
+import certifi
 
 AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN')
 ALGORITHMS = os.getenv('AUTH0_ALGORITHMS', 'RS256').split(',')
@@ -45,42 +46,18 @@ def get_token_auth_header():
     return token
 
 def verify_decode_jwt(token):
-    jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json', cafile=certifi.where())
-    jwks = json.loads(jsonurl.read())
-    unverified_header = jwt.get_unverified_header(token)
-    rsa_key = {}
-    if 'kid' not in unverified_header:
-        raise AuthError({
-            'code': 'invalid_header',
-            'description': 'Authorization malformed.'
-        }, 401)
-
-    for key in jwks['keys']:
-        if key['kid'] == unverified_header['kid']:
-            rsa_key = {
-                'kty': key['kty'],
-                'kid': key['kid'],
-                'use': key['use'],
-                'n': key['n'],
-                'e': key['e']
-            }
-    if rsa_key:
+    if os.getenv('FLASK_ENV') == 'testing':
+        # Load the public key for testing
+        with open('tests/public_key.pem', 'r') as f:
+            public_key = f.read()
         try:
-            payload = jwt.decode(
-                token,
-                rsa_key,
-                algorithms=ALGORITHMS,
-                audience=AUTH0_AUDIENCE,
-                issuer='https://' + AUTH0_DOMAIN + '/'
-            )
+            payload = jwt.decode(token, public_key, algorithms=['RS256'])
             return payload
-
         except jwt.ExpiredSignatureError:
             raise AuthError({
                 'code': 'token_expired',
-                'description': 'Token expired.'
+                'description': 'Token is expired.'
             }, 401)
-
         except jwt.JWTClaimsError:
             raise AuthError({
                 'code': 'invalid_claims',
@@ -90,11 +67,59 @@ def verify_decode_jwt(token):
             raise AuthError({
                 'code': 'invalid_header',
                 'description': 'Unable to parse authentication token.'
-            }, 400)
-    raise AuthError({
-        'code': 'invalid_header',
-        'description': 'Unable to find the appropriate key.'
-    }, 400)
+            }, 401)
+    else:
+      ssl_context = ssl.create_default_context(cafile=certifi.where())
+      jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json', context=ssl_context)
+      jwks = json.loads(jsonurl.read())
+      unverified_header = jwt.get_unverified_header(token)
+      rsa_key = {}
+      if 'kid' not in unverified_header:
+          raise AuthError({
+              'code': 'invalid_header',
+              'description': 'Authorization malformed.'
+          }, 401)
+
+      for key in jwks['keys']:
+          if key['kid'] == unverified_header['kid']:
+              rsa_key = {
+                  'kty': key['kty'],
+                  'kid': key['kid'],
+                  'use': key['use'],
+                  'n': key['n'],
+                  'e': key['e']
+              }
+      if rsa_key:
+          try:
+              payload = jwt.decode(
+                  token,
+                  rsa_key,
+                  algorithms=ALGORITHMS,
+                  audience=AUTH0_AUDIENCE,
+                  issuer='https://' + AUTH0_DOMAIN + '/'
+              )
+              return payload
+
+          except jwt.ExpiredSignatureError:
+              raise AuthError({
+                  'code': 'token_expired',
+                  'description': 'Token expired.'
+              }, 401)
+
+          except jwt.JWTClaimsError:
+              raise AuthError({
+                  'code': 'invalid_claims',
+                  'description': 'Incorrect claims. Please, check the audience and issuer.'
+              }, 401)
+          except Exception:
+              raise AuthError({
+                  'code': 'invalid_header',
+                  'description': 'Unable to parse authentication token.'
+              }, 400)
+      raise AuthError({
+          'code': 'invalid_header',
+          'description': 'Unable to find the appropriate key.'
+      }, 400)
 
 def check_permissions(permission, payload):
     if 'permissions' not in payload:

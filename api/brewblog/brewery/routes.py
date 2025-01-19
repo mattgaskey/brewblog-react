@@ -28,6 +28,15 @@ def breweries(payload):
 @requires_auth('create:breweries')
 def create_brewery(payload):
     data = request.json
+
+    if not data:
+        return jsonify({'error': 'Request does not contain a valid JSON body'}), 400
+
+    required_fields = ['id', 'name', 'address', 'city', 'state', 'phone', 'website_link']
+    for field in required_fields:
+        if field not in data:
+            return jsonify({'error': f'Missing required field: {field}'}), 400
+
     brewery_id = data.get('id')
 
     # Check if the brewery already exists
@@ -35,18 +44,24 @@ def create_brewery(payload):
     if existing_brewery:
         return jsonify({'error': f'Brewery with ID {brewery_id} already exists.'}), 400
 
-    new_brewery = Brewery(
-        id=brewery_id,
-        name=data.get('name'),
-        address=data.get('address'),
-        city=data.get('city'),
-        state=data.get('state'),
-        phone=data.get('phone'),
-        website_link=data.get('website_link')
-    )
-    db.session.add(new_brewery)
-    db.session.commit()
-    return jsonify(new_brewery.serialize()), 201
+    try:
+        new_brewery = Brewery(
+            id=brewery_id,
+            name=data.get('name'),
+            address=data.get('address'),
+            city=data.get('city'),
+            state=data.get('state'),
+            phone=data.get('phone'),
+            website_link=data.get('website_link')
+        )
+        db.session.add(new_brewery)
+        db.session.commit()
+        return jsonify(new_brewery.serialize()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 422
+    finally:
+        db.session.close()
 
 @bp.route('/api/breweries/<string:brewery_id>')
 @requires_auth('get:breweries')

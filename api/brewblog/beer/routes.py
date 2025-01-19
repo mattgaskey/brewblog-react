@@ -24,6 +24,7 @@ def create_beer(payload):
         return jsonify({'error': f'Brewery with ID {brewery_id} not found.'}), 404
 
     new_beer = Beer(
+        id=data.get('id'),
         name=data.get('name'),
         description=data.get('description'),
         style_id=data.get('style'),
