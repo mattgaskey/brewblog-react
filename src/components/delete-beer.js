@@ -66,7 +66,7 @@ export const DeleteBeerForm = ({ beerId, onBeerDeleted }) => {
 
   return (
     <form onSubmit={handleDelete}>
-      <button type="submit" className="button button--danger">Delete Beer</button>
+      <button type="submit" className="button button--compact button--secondary">Delete Beer</button>
     </form>
   );
 };

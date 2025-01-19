@@ -161,7 +161,7 @@ export const EditBrewery = ({ brewery, onUpdate }) => {
               className="text-input"
             />
           </div>
-          <button type="submit" className="submit-button">Save Changes</button>
+          <button type="submit" className="button button--compact button--primary">Save Changes</button>
         </form>
       )}
     </div>
