@@ -1,20 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
 
 export const DeleteBeerForm = ({ beerId, onBeerDeleted }) => {
   const { getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
   const [hasDeletePermission, setHasDeletePermission] = useState(false);
 
   useEffect(() => {
     const checkPermissions = async () => {
-      const token = await getAccessTokenSilently();
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      const permissions = decodedToken.permissions || [];
-      setHasDeletePermission(permissions.includes('delete:beers'));
+      try {
+        const token = await getAccessTokenSilently();
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        const permissions = decodedToken.permissions || [];
+        setHasDeletePermission(permissions.includes('delete:beers'));
+      } catch (error) {
+        navigate('/error', {
+          state: {
+            errorCode: 500,
+            errorMessage: error.message || 'An unexpected error occurred',
+          },
+        });
+      }
     };
 
     checkPermissions();
-  }, [getAccessTokenSilently]);
+  }, [getAccessTokenSilently, navigate]);
 
   const handleDelete = async (e) => {
     e.preventDefault();
@@ -31,10 +42,21 @@ export const DeleteBeerForm = ({ beerId, onBeerDeleted }) => {
       if (response.ok) {
         onBeerDeleted();
       } else {
-        console.error('Failed to delete beer');
+        const errorData = await response.json();
+        navigate('/error', {
+          state: {
+            errorCode: response.status,
+            errorMessage: errorData.error || 'Failed to delete beer',
+          },
+        });
       }
     } catch (error) {
-      console.error('Error:', error);
+      navigate('/error', {
+        state: {
+          errorCode: 500,
+          errorMessage: error.message || 'An unexpected error occurred',
+        },
+      });
     }
   };
 

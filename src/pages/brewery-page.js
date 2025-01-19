@@ -17,6 +17,16 @@ export const BreweryPage = () => {
 
   useEffect(() => {
     const fetchBreweryAndBeers = async () => {
+      if (!isAuthenticated) {
+        navigate('/error', {
+          state: {
+            errorCode: 401,
+            errorMessage: 'User is not authenticated.',
+          },
+        });
+        return;
+      }
+      
       try {
         const token = await getAccessTokenSilently();
 

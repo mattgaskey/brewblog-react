@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import '../styles/components/breweries-list.css';
 
 export const BreweriesList = () => {
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
+  const navigate = useNavigate();
   const [breweries, setBreweries] = useState([]);
 
   useEffect(() => {
     const fetchBreweries = async () => {
+      if (!isAuthenticated) {
+        navigate('/error', {
+          state: {
+            errorCode: 401,
+            errorMessage: 'User is not authenticated.',
+          },
+        });
+        return;
+      }
+
       try {
         const token = await getAccessTokenSilently();
         const response = await fetch(`${process.env.REACT_APP_API_SERVER_URL}/api/breweries`, {
@@ -21,15 +32,26 @@ export const BreweriesList = () => {
           const data = await response.json();
           setBreweries(data);
         } else {
-          console.error('Failed to fetch breweries');
+          const errorData = await response.json();
+          navigate('/error', {
+            state: {
+              errorCode: response.status,
+              errorMessage: errorData.error || 'Failed to fetch breweries',
+            },
+          });
         }
       } catch (error) {
-        console.error('Error:', error);
+        navigate('/error', {
+          state: {
+            errorCode: 500,
+            errorMessage: error.message || 'An unexpected error occurred',
+          },
+        });
       }
     };
 
     fetchBreweries();
-  }, [getAccessTokenSilently, isAuthenticated]);
+  }, [getAccessTokenSilently, isAuthenticated, navigate]);
 
   return (
     <div className="breweries-list">

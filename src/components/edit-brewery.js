@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/components/beer-form.css';
 
 export const EditBrewery = ({ brewery, onUpdate }) => {
   const { getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
     name: brewery.name || '',
@@ -17,14 +19,23 @@ export const EditBrewery = ({ brewery, onUpdate }) => {
 
   useEffect(() => {
     const checkPermissions = async () => {
-      const token = await getAccessTokenSilently();
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      const permissions = decodedToken.permissions || [];
-      setHasEditPermission(permissions.includes('edit:breweries'));
+      try {
+        const token = await getAccessTokenSilently();
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        const permissions = decodedToken.permissions || [];
+        setHasEditPermission(permissions.includes('edit:breweries'));
+      } catch (error) {
+        navigate('/error', {
+          state: {
+            errorCode: 500,
+            errorMessage: error.message || 'An unexpected error occurred',
+          },
+        });
+      }
     };
 
     checkPermissions();
-  }, [getAccessTokenSilently]);
+  }, [getAccessTokenSilently, navigate]);
 
   const toggleFormVisibility = () => {
     setIsVisible(!isVisible);
@@ -55,10 +66,21 @@ export const EditBrewery = ({ brewery, onUpdate }) => {
         onUpdate(updatedBrewery);
         toggleFormVisibility();
       } else {
-        console.error('Failed to update brewery');
+        const errorData = await response.json();
+        navigate('/error', {
+          state: {
+            errorCode: response.status,
+            errorMessage: errorData.error || 'Failed to update brewery',
+          },
+        });
       }
     } catch (error) {
-      console.error('Error:', error);
+      navigate('/error', {
+        state: {
+          errorCode: 500,
+          errorMessage: error.message || 'An unexpected error occurred',
+        },
+      });
     }
   };
 

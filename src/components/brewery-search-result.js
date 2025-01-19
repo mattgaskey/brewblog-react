@@ -1,7 +1,11 @@
 import React from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import { AddBrewery } from './add-brewery';
 
-export const BrewerySearchResult = ({ brewery }) => (
+export const BrewerySearchResult = ({ brewery }) => {
+  const { isAuthenticated } = useAuth0();
+
+  return (
     <div className="search-results-grid">
       <div>
         <h3 className="brewery-search-result__headline">
@@ -15,11 +19,13 @@ export const BrewerySearchResult = ({ brewery }) => (
           className="brewery-search-result__link"
           target="_blank"
           rel="noopener noreferrer"
-        >{brewery.website_url}</a>
+        >
+          {brewery.website_url}
+        </a>
       </div>
       <div>
-        <AddBrewery brewery={brewery} />
+        {isAuthenticated && <AddBrewery brewery={brewery} />}
       </div>
     </div>
-    
-);
+  );
+};

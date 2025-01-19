@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/components/beer-form.css';
 
 export const BeerForm = ({ breweryId, onBeerAdded }) => {
   const { getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
   const [styles, setStyles] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -21,15 +23,26 @@ export const BeerForm = ({ breweryId, onBeerAdded }) => {
           const data = await response.json();
           setStyles(data);
         } else {
-          console.error('Failed to fetch styles');
+          const errorData = await response.json();
+          navigate('/error', {
+            state: {
+              errorCode: response.status,
+              errorMessage: errorData.error || 'Failed to fetch styles',
+            },
+          });
         }
       } catch (error) {
-        console.error('Error:', error);
+        navigate('/error', {
+          state: {
+            errorCode: 500,
+            errorMessage: error.message || 'An unexpected error occurred',
+          },
+        });
       }
     };
 
     fetchStyles();
-  }, []);
+  }, [navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -53,7 +66,6 @@ export const BeerForm = ({ breweryId, onBeerAdded }) => {
       });
 
       if (response.ok) {
-        console.log('Beer added successfully');
         onBeerAdded();
         setFormData({
           name: '',
@@ -62,10 +74,21 @@ export const BeerForm = ({ breweryId, onBeerAdded }) => {
           brewery_id: breweryId,
         });
       } else {
-        console.error('Failed to add beer');
+        const errorData = await response.json();
+        navigate('/error', {
+          state: {
+            errorCode: response.status,
+            errorMessage: errorData.error || 'Failed to add beer',
+          },
+        });
       }
     } catch (error) {
-      console.error('Error:', error);
+      navigate('/error', {
+        state: {
+          errorCode: 500,
+          errorMessage: error.message || 'An unexpected error occurred',
+        },
+      });
     }
   };
 
