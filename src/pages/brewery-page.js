@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { PageLayout } from '../components/page-layout';
 import { BeerForm } from '../components/beer-form';
@@ -11,16 +11,12 @@ import '../styles/components/brewery-page.css';
 export const BreweryPage = () => {
   const { id } = useParams();
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
+  const navigate = useNavigate();
   const [brewery, setBrewery] = useState(null);
   const [beers, setBeers] = useState([]);
 
   useEffect(() => {
     const fetchBreweryAndBeers = async () => {
-      if (!isAuthenticated) {
-        console.log('User is not authenticated.');
-        return;
-      }
-
       try {
         const token = await getAccessTokenSilently();
 
@@ -34,7 +30,14 @@ export const BreweryPage = () => {
           const breweryData = await breweryResponse.json();
           setBrewery(breweryData);
         } else {
-          console.error('Failed to fetch brewery');
+          const errorData = await breweryResponse.json();
+          navigate('/error', {
+            state: {
+              errorCode: breweryResponse.status,
+              errorMessage: errorData.error || 'Failed to fetch brewery',
+            },
+          });
+          return;
         }
 
         // Fetch beers for the brewery
@@ -48,10 +51,21 @@ export const BreweryPage = () => {
           const beersData = await beersResponse.json();
           setBeers(beersData);
         } else {
-          console.error('Failed to fetch beers');
+          const errorData = await beersResponse.json();
+          navigate('/error', {
+            state: {
+              errorCode: beersResponse.status,
+              errorMessage: errorData.error || 'Failed to fetch beers',
+            },
+          });
         }
       } catch (error) {
-        console.error('Error:', error);
+        navigate('/error', {
+          state: {
+            errorCode: 500,
+            errorMessage: error.message || 'An unexpected error occurred',
+          },
+        });
       }
     };
 
@@ -73,10 +87,21 @@ export const BreweryPage = () => {
           const data = await response.json();
           setBeers(data);
         } else {
-          console.error('Failed to fetch beers');
+          const errorData = await response.json();
+          navigate('/error', {
+            state: {
+              errorCode: response.status,
+              errorMessage: errorData.error || 'Failed to fetch beers',
+            },
+          });
         }
       } catch (error) {
-        console.error('Error:', error);
+        navigate('/error', {
+          state: {
+            errorCode: 500,
+            errorMessage: error.message || 'An unexpected error occurred',
+          },
+        });
       }
     };
 

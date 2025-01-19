@@ -1,3 +1,4 @@
-.brewery-search-results ul {
-
+.no-results {
+  text-align: center;
+  margin-top: 20px;
 }

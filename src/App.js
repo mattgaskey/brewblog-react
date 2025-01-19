@@ -4,7 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import { PageLoader } from "./components/page-loader";
 import { AuthenticationGuard } from "./components/authentication-guard";
 import { HomePage } from "./pages/home-page";
-import { NotFoundPage } from "./pages/not-found-page";
+import { ErrorPage } from "./pages/error-page";
 import { ProfilePage } from "./pages/profile-page";
 import { BreweriesPage } from "./pages/breweries-page";
 import { BreweryPage } from "./pages/brewery-page";
@@ -29,7 +29,7 @@ export const App = () => {
         path="/profile"
         element={<AuthenticationGuard component={ProfilePage} />}
       />
-      <Route path="*" element={<NotFoundPage />} />
+      <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
 };

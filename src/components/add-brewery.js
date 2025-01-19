@@ -9,9 +9,6 @@ export const AddBrewery = ({ brewery }) => {
 
   useEffect(() => {
     const checkPermissions = async () => {
-      if (!isAuthenticated) {
-        return;
-      }
       const token = await getAccessTokenSilently();
       const decodedToken = JSON.parse(atob(token.split('.')[1]));
       const permissions = decodedToken.permissions || [];
@@ -50,10 +47,21 @@ export const AddBrewery = ({ brewery }) => {
         console.log('Brewery added successfully');
         navigate('/breweries');
       } else {
-        console.error('Failed to add brewery');
+        const errorData = await response.json();
+        navigate('/error', {
+          state: {
+            errorCode: response.status,
+            errorMessage: errorData.error || 'Failed to add brewery',
+          },
+        });
       }
     } catch (error) {
-      console.error('Error:', error);
+      navigate('/error', {
+        state: {
+          errorCode: 500,
+          errorMessage: error.message || 'An unexpected error occurred',
+        },
+      });
     }
   };
 

@@ -14,6 +14,14 @@ export const BrewerySearchResults = ({ breweries }) => {
           ))}
         </ul>
       )}
+      {breweries.length === 0 && (
+        <div className="no-results">
+          <p>No results found for your query.  Try again with something like: </p>
+          <p className="monospace">
+            San Diego
+          </p>
+        </div>
+      )}
     </div>
   );
 };

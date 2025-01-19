@@ -9,11 +9,6 @@ export const BreweriesList = () => {
 
   useEffect(() => {
     const fetchBreweries = async () => {
-      if (!isAuthenticated) {
-        console.log('User is not authenticated');
-        return;
-      }
-
       try {
         const token = await getAccessTokenSilently();
         const response = await fetch(`${process.env.REACT_APP_API_SERVER_URL}/api/breweries`, {
