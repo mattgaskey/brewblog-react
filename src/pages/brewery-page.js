@@ -80,7 +80,7 @@ export const BreweryPage = () => {
     };
 
     fetchBreweryAndBeers();
-  }, [getAccessTokenSilently, isAuthenticated, id]);
+  }, [getAccessTokenSilently, isAuthenticated, id, navigate]);
 
   const handleBeerAdded = () => {
 
